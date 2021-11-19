@@ -11,7 +11,7 @@ app.use('/', routes);
 
 mongoose.connect(
     process.env.MONGODB_URI,
-    { useFindAndModify: false, useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true},
+    {useUnifiedTopology: true, useNewUrlParser: true},
     (err) => {
         if(err) return console.log("Error: ", err);
 
