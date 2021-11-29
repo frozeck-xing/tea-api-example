@@ -1,10 +1,12 @@
 const express = require('express');
+const multer = require('multer');
 const teaController = require('../controllers/tea');
 
 const router = express.Router();
+const upload = multer();
 
 // '/tea' routes
-router.post('/tea', teaController.newTea);
+router.post('/tea', upload.none(), teaController.newTea);
 router.get('/tea', teaController.getAllTeas);
 router.delete('/tea', teaController.deleteAllTeas);
 
