@@ -1,5 +1,18 @@
 const { json } = require('express');
+const multer = require('multer');
 const TeaModel = require('../models/tea');
+
+// multer module will handle the image file
+const storage = multer.diskStorage({
+    destination: (request, file, cb) => {
+        cb(null, './uploads');
+    },
+    filename: (request, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+
+const uploadImg = multer({storage: storage}).single('image');
 
 // GET '/tea'
 const getAllTeas = (request, response, next) => {
@@ -14,17 +27,24 @@ const getAllTeas = (request, response, next) => {
 
 // POST '/tea'
 const newTea = (request, response, next) => {
+    const comment = request.body?.comment;
+
+    const newComment = {
+        text: comment,
+        date: new Date()
+    };
 
     TeaModel.findOne({name: request.body.name}, (error, data) => {
         if(!data){
             const newTea= new TeaModel({
                 name: request.body.name,
-                image: request.body.image,
+                image: request.file.path,
                 description: request.body.description,
                 keywords: request.body.keywords,
                 origin: request.body.origin,
                 brew_time: request.body.brew_time,
                 temperature: request.body.temperature,
+                comments: [newComment]
             });
 
             newTea.save((error, data) => {
@@ -97,4 +117,4 @@ const deleteOneTea = (request, response, next) => {
     });
 };
 
-module.exports = {newTea, getAllTeas, deleteAllTeas, getOneTea, newComment, deleteOneTea};
+module.exports = {newTea, getAllTeas, deleteAllTeas, getOneTea, newComment, deleteOneTea, uploadImg};
