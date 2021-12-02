@@ -1,19 +1,35 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const compression = require('compression');
 const routes = require('./routes/tea');
 
 const app = express();
 
 app.use(express.json());
 
+app.use(helmet());
+
+app.use(compression());
+
 app.use('/', routes);
+
+app.route('/')
+    .get((request, response) => {
+        response.sendFile(process.cwd() + '/index.html');
+    });
 
 app.use('/uploads', express.static('./uploads'));
 
 mongoose.connect(
     process.env.MONGODB_URI,
-    {useUnifiedTopology: true, useNewUrlParser: true},
+    {
+        useUnifiedTopology: true, 
+        useNewUrlParser: true,
+        server: {socketOptions: {keepAlive: 300000, connectTimeoutMS: 30000}},
+        replset: {socketOptions: {keepAlive: 300000, connectTimeoutMS: 30000}}
+    },
     (err) => {
         if(err) return console.log("Error: ", err);
 
