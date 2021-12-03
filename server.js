@@ -25,11 +25,11 @@ app.use('/uploads', express.static('./uploads'));
 mongoose.connect(
     process.env.MONGODB_URI,
     {
-        useUnifiedTopology: true, 
+        useUnifiedTopology: true,
         useNewUrlParser: true,
-        server: {socketOptions: {keepAlive: 300000, connectTimeoutMS: 30000}},
-        replset: {socketOptions: {keepAlive: 300000, connectTimeoutMS: 30000}}
-    },
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000
+      },
     (err) => {
         if(err) return console.log("Error: ", err);
 
